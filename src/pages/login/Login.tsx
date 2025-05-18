@@ -17,6 +17,7 @@ const Login = (): ReactElement => {
     accessToken,
     refreshToken,
     buttonLoading,
+    isMod,
     errorCode,
   } = useSelector((state: RootState) => state.auth);
 
@@ -30,6 +31,7 @@ const Login = (): ReactElement => {
     if (loginSuccessful) {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('isMod', isMod.toString());
       localStorage.setItem('username', username);
       navigate(ROUTES.HOME);
     } else {

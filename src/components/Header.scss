@@ -36,8 +36,13 @@
       }
     }
 
-    // .profile-button-container {
-    //   height: 20px;
-    // }
+    .profile-button-container {
+        display: flex;
+
+        .button-icon {
+          width: 25px;
+          height: 25px;
+        }
+    }
   }
 }

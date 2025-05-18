@@ -12,6 +12,7 @@ import ProductDetails from './pages/product_details/ProductDetails';
 import useLoginAutomatically from './hooks/useLoginAutomatically';
 import { LoginState, ProtectedRoute } from './routes/ProtectedRoute';
 import useCheckForcefulLogout from './hooks/useCheckForcefulLogout';
+import ModPanel from './pages/mod_panel/ModPanel';
 
 function App(): ReactElement {
   useLoginAutomatically();
@@ -44,6 +45,14 @@ function App(): ReactElement {
             element={(
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path={ROUTES.MOD}
+            element={(
+              <ProtectedRoute expectedLoginState={LoginState.LOGGED_IN_MOD}>
+                <ModPanel />
               </ProtectedRoute>
             )}
           />

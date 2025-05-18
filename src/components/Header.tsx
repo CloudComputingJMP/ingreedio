@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -8,13 +7,60 @@ import './Header.scss';
 import TextButton from './TextButton/TextButton';
 import { ROUTES } from '../routes/routes';
 import profileIcon from '../assets/icons/profile.svg';
+import modIcon from '../assets/icons/mod.svg';
 import { RootState } from '../store/reducers';
+
+const IconsPanel = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isMod } = useSelector((state: RootState) => state.auth);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="registration-login-container">
+        <div className="button-container">
+          <TextButton onClick={() => navigate(ROUTES.REGISTRATION)}>
+            Sign up
+          </TextButton>
+        </div>
+        <div className="button-container">
+          <FilledButton onClick={() => navigate(ROUTES.LOGIN)}>
+            Log in
+          </FilledButton>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="profile-button-container">
+      {isMod && (
+        <TextButton
+          onClick={() => navigate(ROUTES.MOD)}
+        >
+          <div className="button-icon">
+            <img
+              src={modIcon}
+              alt="moderator console"
+            />
+          </div>
+          <div>Mod</div>
+        </TextButton>
+      )}
+      <TextButton onClick={() => navigate(ROUTES.PROFILE)}>
+        <div className="button-icon">
+          <img
+            src={profileIcon}
+            alt="profile icon"
+          />
+        </div>
+        <div>Profile</div>
+      </TextButton>
+    </div>
+  );
+};
 
 const Header = (): ReactElement => {
   const navigate = useNavigate();
-  const {
-    isAuthenticated,
-  } = useSelector((state: RootState) => state.auth);
 
   return (
     <div className="header">
@@ -27,43 +73,7 @@ const Header = (): ReactElement => {
         <img src={logo} alt="Logo" />
       </div>
       <div className="right-control-container">
-        {isAuthenticated ? (
-          <div className="profile-button-container">
-            <TextButton onClick={() => navigate(ROUTES.PROFILE)}>
-              <div>
-                <img
-                  src={profileIcon}
-                  alt="profile icon"
-                  width="25"
-                  height="25"
-                />
-              </div>
-              <div>Profile</div>
-            </TextButton>
-          </div>
-        ) : (
-          <div className="registration-login-container">
-            <div className="button-container">
-              <TextButton
-                onClick={() => {
-                  navigate(ROUTES.REGISTRATION);
-                }}
-              >
-                Sign up
-              </TextButton>
-            </div>
-            <div className="button-container">
-              <FilledButton
-                onClick={() => {
-                  navigate(ROUTES.LOGIN);
-                }}
-              >
-                Log in
-              </FilledButton>
-            </div>
-          </div>
-        )}
-
+        <IconsPanel />
       </div>
     </div>
   );

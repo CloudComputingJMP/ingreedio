@@ -21,8 +21,9 @@ export const ProtectedRoute = ({
   redirectPath = ROUTES.HOME,
   children,
 }: ProtectedRouteProps): React.ReactElement => {
-  const { isAuthenticated, loginSuccessful, signupSuccessful, isMod } =
-    useSelector((state: RootState) => state.auth);
+  const {
+    isAuthenticated, loginSuccessful, signupSuccessful, isMod,
+  } = useSelector((state: RootState) => state.auth);
 
   // do not enforce route protection when login/registration did not finish
   if (loginSuccessful !== null || signupSuccessful !== null) return children;
