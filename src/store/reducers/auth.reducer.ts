@@ -8,6 +8,7 @@ type AuthState = {
   refreshToken: string;
   buttonLoading: boolean;
   isAuthenticated: boolean;
+  isMod: boolean;
   errorCode: number | null;
 };
 
@@ -18,6 +19,7 @@ const initialState: AuthState = {
   refreshToken: '',
   buttonLoading: false,
   isAuthenticated: false,
+  isMod: false,
   errorCode: null,
 };
 
@@ -29,7 +31,8 @@ const auth = (
     case types.LOG_USER:
       return {
         ...state,
-        accessToken: action.payload,
+        accessToken: action.payload.accessToken,
+        isMod: action.payload.isMod,
         isAuthenticated: true,
       };
 
@@ -47,6 +50,7 @@ const auth = (
         refreshToken: action.payload.refreshToken,
         buttonLoading: false,
         isAuthenticated: true,
+        isMod: action.payload.isMod,
       };
 
     case types.SIGN_IN_FAILURE:

@@ -61,9 +61,9 @@ const endAuthAction = (): AnyAction => ({
   type: types.END_AUTH_ACTION,
 });
 
-const logUser = (accessToken: string, username: string): AnyAction => ({
+const logUser = (accessToken: string, username: string, isMod: boolean): AnyAction => ({
   type: types.LOG_USER,
-  payload: { accessToken, username },
+  payload: { accessToken, username, isMod },
 });
 
 export default {

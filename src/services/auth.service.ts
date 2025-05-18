@@ -6,6 +6,7 @@ const authApiUrl = `${apiUrl}/auth`;
 export interface AuthResponse {
   accessToken: string,
   refreshToken: string,
+  isMod: boolean,
 }
 
 export const signInApi = (

@@ -9,8 +9,9 @@ const useLoginAutomatically = (): void => {
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const username = localStorage.getItem('username');
+    const isMod = localStorage.getItem('isMod') === 'true';
     if (!isUnmountedRef.current && accessToken && username) {
-      dispatch(actions.logUser(accessToken, username));
+      dispatch(actions.logUser(accessToken, username, isMod));
       dispatch(actions.setUsername(username));
     }
     return () => {

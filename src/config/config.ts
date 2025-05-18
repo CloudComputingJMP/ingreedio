@@ -1,1 +1,1 @@
-export const apiUrl = 'https://ingreedio-api-em77pqkvxa-ew.a.run.app/api';
+export const apiUrl = 'https://ingreedio-be-865714441621.europe-central2.run.app/api';

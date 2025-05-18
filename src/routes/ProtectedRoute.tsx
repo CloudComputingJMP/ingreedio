@@ -7,6 +7,7 @@ import { ROUTES } from './routes';
 export enum LoginState {
   LOGGED_IN = 'LOGGED_IN',
   LOGGED_OUT = 'LOGGED_OUT',
+  LOGGED_IN_MOD = 'LOGGED_IN_MOD',
 }
 
 type ProtectedRouteProps = {
@@ -20,16 +21,20 @@ export const ProtectedRoute = ({
   redirectPath = ROUTES.HOME,
   children,
 }: ProtectedRouteProps): React.ReactElement => {
-  const { isAuthenticated, loginSuccessful, signupSuccessful } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { isAuthenticated, loginSuccessful, signupSuccessful, isMod } =
+    useSelector((state: RootState) => state.auth);
 
   // do not enforce route protection when login/registration did not finish
   if (loginSuccessful !== null || signupSuccessful !== null) return children;
 
-  const expectedState = expectedLoginState === LoginState.LOGGED_IN;
-  if (expectedState !== isAuthenticated) {
+  if (expectedLoginState === LoginState.LOGGED_IN && !isAuthenticated) {
     return <Navigate to={redirectPath} replace />;
+  }
+
+  if (expectedLoginState === LoginState.LOGGED_IN_MOD) {
+    if (!isAuthenticated || !isMod) {
+      return <Navigate to={redirectPath} replace />;
+    }
   }
 
   return children;
