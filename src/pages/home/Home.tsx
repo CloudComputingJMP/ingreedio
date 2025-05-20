@@ -1,28 +1,37 @@
 // Home.tsx
 
-import React, { FormEvent, ReactElement, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './Home.scss';
+
 import { AxiosResponse } from 'axios';
+import React, { FormEvent, ReactElement, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import AutocompleteSearchBar from '../../components/AutocompleteSearchBar/AutocompleteSearchBar';
-import FilledButton from '../../components/FilledButton/FilledButton';
+import FilledButton, {
+  ColorScheme,
+} from '../../components/FilledButton/FilledButton';
+import SearchBar from '../../components/SearchBar/SearchBar';
+import Tag from '../../components/Tag/Tag';
 import { ROUTES } from '../../routes/routes';
 import {
-  IngredientObject,
   getIngredientsApi,
+  IngredientObject,
 } from '../../services/ingredients.service';
-import Tag from '../../components/Tag/Tag';
-import { ProductCriteria, productCriteriaToUrl } from '../../services/product.service';
+import {
+  ProductCriteria,
+  productCriteriaToUrl,
+} from '../../services/product.service';
+import { RootState } from '../../store/reducers';
 import { TagColor } from '../../theme/tagColor';
 import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
-import SearchBar from '../../components/SearchBar/SearchBar';
-import { RootState } from '../../store/reducers';
 
 const MAX_INGREDIENTS_SUGGESTIONS = 50;
 
 const Home = (): ReactElement => {
-  const allergensSelector = useSelector((state: RootState) => state.like.dislikedIngredients);
+  const allergensSelector = useSelector(
+    (state: RootState) => state.like.dislikedIngredients,
+  );
   const hasAllergens: boolean = allergensSelector?.length > 0;
 
   const navigate = useNavigate();
@@ -40,7 +49,9 @@ const Home = (): ReactElement => {
     event.preventDefault();
     const criteria: ProductCriteria = {
       phrase,
-      ingredientsToIncludeIds: selectedIngredients?.map((ingr: IngredientObject) => ingr.id),
+      ingredientsToIncludeIds: selectedIngredients?.map(
+        (ingr: IngredientObject) => ingr.id,
+      ),
     };
     navigate(productCriteriaToUrl(ROUTES.PRODUCTS, criteria));
   };
@@ -73,7 +84,8 @@ const Home = (): ReactElement => {
 
   const handleRemoveIngredient = (id: string) => {
     // eslint-disable-next-line max-len
-    setSelectedIngredients((prevIngredients: IngredientObject[]) => prevIngredients.filter((ingredient) => ingredient.id !== id));
+    setSelectedIngredients((prevIngredients: IngredientObject[]) =>
+      prevIngredients.filter((ingredient) => ingredient.id !== id));
   };
 
   return (
@@ -121,6 +133,14 @@ const Home = (): ReactElement => {
             </div>
           </div>
         </form>
+        <div className="ai-search-redirect">
+          <FilledButton
+            colorScheme={ColorScheme.AI}
+            onClick={() => navigate(ROUTES.AI)}
+          >
+            Try our new AI search! ✨
+          </FilledButton>
+        </div>
       </div>
     </div>
   );

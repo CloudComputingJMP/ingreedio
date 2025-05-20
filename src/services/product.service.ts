@@ -1,8 +1,9 @@
 import { AxiosResponse } from 'axios';
+
+import api from '../config/api';
 import { apiUrl } from '../config/config';
 import RequestUrlBuilder from '../utils/requestBuilder';
-import api from '../config/api';
-import { stringToUrlString } from '../utils/urlUtils';
+import { stringToUrlString, urlStringToString } from '../utils/urlUtils';
 
 const productsApiUrl = `${apiUrl}/products`;
 
@@ -17,7 +18,9 @@ enum ProductListRequestParam {
   MIN_RATING = 'min-rating',
   PHRASE = 'phrase',
   SORT_BY = 'sort-by',
-  LIKED = 'liked'
+  LIKED = 'liked',
+  K_NEIGHBOURS = 'kNeighbours',
+  QUERY = 'query',
 }
 
 export enum SortOption {
@@ -29,12 +32,12 @@ export enum SortOption {
 
 export enum SortOrder {
   ASCENDING = 'a',
-  DESCENDING = 'd'
+  DESCENDING = 'd',
 }
 
 export interface SortBy {
-  option: SortOption,
-  order: SortOrder
+  option: SortOption;
+  order: SortOrder;
 }
 
 export interface ProductCriteria {
@@ -47,17 +50,19 @@ export interface ProductCriteria {
   minRating?: number;
   sortingCriteria?: SortBy[];
   phrase?: string;
+  kNeighbours?: number;
+  query?: string;
 }
 
 export interface ProductObject {
   id: string;
   name: string;
-  brand: {id: string, name: string};
+  brand: { id: string; name: string };
   smallImageUrl: string;
-  provider: {id: string, name: string};
+  provider: { id: string; name: string };
   shortDescription: string;
   isLiked?: boolean;
-  rating: number
+  rating: number;
 }
 
 export interface ProductResponse {
@@ -69,13 +74,13 @@ export interface ProductDetailsResponse {
   id: string;
   name: string;
   largeImageUrl: string;
-  provider: {id: string, name: string};
-  brand: {id: string, name: string};
+  provider: { id: string; name: string };
+  brand: { id: string; name: string };
   longDescription: string;
   volume: number;
-  ingredients: {id: string, name: string}[];
-  isLiked: boolean | null,
-  rating: number
+  ingredients: { id: string; name: string }[];
+  isLiked: boolean | null;
+  rating: number;
 }
 
 export const parseSortBy = (input: string): SortBy | undefined => {
@@ -117,14 +122,33 @@ export const urlToProductCriteria = (url: string): ProductCriteria => {
 
   const criteria: ProductCriteria = {
     phrase: queryParams.get(ProductListRequestParam.PHRASE) ?? undefined,
-    ingredientsToExcludeIds: queryParams.get(ProductListRequestParam.INGREDIENTS_EXCLUDE)?.split(',') ?? undefined,
-    ingredientsToIncludeIds: queryParams.get(ProductListRequestParam.INGREDIENTS_INCLUDE)?.split(',') ?? undefined,
-    brandsToExcludeIds: queryParams.get(ProductListRequestParam.BRANDS_EXCLUDE)?.split(',') ?? undefined,
-    brandsToIncludeIds: queryParams.get(ProductListRequestParam.BRANDS_INCLUDE)?.split(',') ?? undefined,
-    providersIds: queryParams.get(ProductListRequestParam.PROVIDERS)?.split(',') ?? undefined,
-    categoriesIds: queryParams.get(ProductListRequestParam.CATEGORIES)?.split(',') ?? undefined,
+    ingredientsToExcludeIds:
+      queryParams
+        .get(ProductListRequestParam.INGREDIENTS_EXCLUDE)
+        ?.split(',') ?? undefined,
+    ingredientsToIncludeIds:
+      queryParams
+        .get(ProductListRequestParam.INGREDIENTS_INCLUDE)
+        ?.split(',') ?? undefined,
+    brandsToExcludeIds:
+      queryParams.get(ProductListRequestParam.BRANDS_EXCLUDE)?.split(',')
+      ?? undefined,
+    brandsToIncludeIds:
+      queryParams.get(ProductListRequestParam.BRANDS_INCLUDE)?.split(',')
+      ?? undefined,
+    providersIds:
+      queryParams.get(ProductListRequestParam.PROVIDERS)?.split(',')
+      ?? undefined,
+    categoriesIds:
+      queryParams.get(ProductListRequestParam.CATEGORIES)?.split(',')
+      ?? undefined,
     minRating,
     sortingCriteria,
+    query: queryParams.get(ProductListRequestParam.QUERY) ?? undefined,
+    kNeighbours: parseInt(
+      queryParams.get(ProductListRequestParam.K_NEIGHBOURS) ?? '0',
+      10,
+    ),
   };
 
   return criteria;
@@ -142,27 +166,62 @@ export const productCriteriaToUrlBuilder = (
     }
   };
 
-  setIdsArrayParam(ProductListRequestParam.INGREDIENTS_INCLUDE, criteria.ingredientsToIncludeIds);
-  setIdsArrayParam(ProductListRequestParam.INGREDIENTS_EXCLUDE, criteria.ingredientsToExcludeIds);
-  setIdsArrayParam(ProductListRequestParam.BRANDS_INCLUDE, criteria.brandsToIncludeIds);
-  setIdsArrayParam(ProductListRequestParam.BRANDS_EXCLUDE, criteria.brandsToExcludeIds);
+  setIdsArrayParam(
+    ProductListRequestParam.INGREDIENTS_INCLUDE,
+    criteria.ingredientsToIncludeIds,
+  );
+  setIdsArrayParam(
+    ProductListRequestParam.INGREDIENTS_EXCLUDE,
+    criteria.ingredientsToExcludeIds,
+  );
+  setIdsArrayParam(
+    ProductListRequestParam.BRANDS_INCLUDE,
+    criteria.brandsToIncludeIds,
+  );
+  setIdsArrayParam(
+    ProductListRequestParam.BRANDS_EXCLUDE,
+    criteria.brandsToExcludeIds,
+  );
   setIdsArrayParam(ProductListRequestParam.CATEGORIES, criteria.categoriesIds);
   setIdsArrayParam(ProductListRequestParam.PROVIDERS, criteria.providersIds);
 
   if (criteria.phrase) {
     // The phrase has the uneccessary spaces removed
     // and the rest of the spaces are replaced with '%20'
-    builder.setParam(ProductListRequestParam.PHRASE, stringToUrlString(criteria.phrase));
+    builder.setParam(
+      ProductListRequestParam.PHRASE,
+      stringToUrlString(criteria.phrase),
+    );
   }
 
   if (criteria.minRating) {
-    builder.setParam(ProductListRequestParam.MIN_RATING, criteria.minRating.toString());
+    builder.setParam(
+      ProductListRequestParam.MIN_RATING,
+      criteria.minRating.toString(),
+    );
   }
 
   if (criteria.sortingCriteria && criteria.sortingCriteria.length > 0) {
-    builder.setParam(ProductListRequestParam.SORT_BY, criteria.sortingCriteria.map(
-      (sortBy: SortBy) => `${sortBy.order}-${sortBy.option}`,
-    ).join(','));
+    builder.setParam(
+      ProductListRequestParam.SORT_BY,
+      criteria.sortingCriteria
+        .map((sortBy: SortBy) => `${sortBy.order}-${sortBy.option}`)
+        .join(','),
+    );
+  }
+
+  if (criteria.kNeighbours) {
+    builder.setParam(
+      ProductListRequestParam.K_NEIGHBOURS,
+      criteria.kNeighbours.toString(),
+    );
+  }
+
+  if (criteria.query) {
+    builder.setParam(
+      ProductListRequestParam.QUERY,
+      stringToUrlString(criteria.query),
+    );
   }
 
   return builder;
@@ -179,26 +238,58 @@ export const getProductsListApi = (
 ): Promise<AxiosResponse<ProductResponse>> => {
   if (criteria === undefined) {
     const builder = new RequestUrlBuilder(`${productsApiUrl}/search`);
-    builder.setParam(ProductListRequestParam.PAGE_NUMBER, (pageNumber ?? 0).toString());
+    builder.setParam(
+      ProductListRequestParam.PAGE_NUMBER,
+      (pageNumber ?? 0).toString(),
+    );
     return api.get(builder.build());
   }
 
-  const builder = productCriteriaToUrlBuilder(`${productsApiUrl}/search`, criteria);
-  builder.setParam(ProductListRequestParam.PAGE_NUMBER, (pageNumber ?? 0).toString());
+  const builder = productCriteriaToUrlBuilder(
+    `${productsApiUrl}/search`,
+    criteria,
+  );
+  builder.setParam(
+    ProductListRequestParam.PAGE_NUMBER,
+    (pageNumber ?? 0).toString(),
+  );
 
   return api.get(builder.build());
 };
 
 export const getProductDetailsApi = (
   id: string,
-): Promise<AxiosResponse<ProductDetailsResponse>> => api.get(`${productsApiUrl}/${id}`);
+): Promise<AxiosResponse<ProductDetailsResponse>> =>
+  api.get(`${productsApiUrl}/${id}`);
 
 export const getLikedProductsApi = (
   pageNumber?: number,
 ): Promise<AxiosResponse<ProductResponse>> => {
   const builder = new RequestUrlBuilder(productsApiUrl);
-  builder.setParam(ProductListRequestParam.PAGE_NUMBER, (pageNumber ?? 0).toString());
+  builder.setParam(
+    ProductListRequestParam.PAGE_NUMBER,
+    (pageNumber ?? 0).toString(),
+  );
   builder.setParam(ProductListRequestParam.LIKED, 'true');
 
   return api.get(builder.build());
+};
+
+export const getProductsListAiApi = (
+  criteria?: ProductCriteria,
+): Promise<AxiosResponse<ProductResponse>> => {
+  if (criteria === undefined) {
+    const builder = new RequestUrlBuilder(`${productsApiUrl}/AskAI`);
+    return api.post(builder.build());
+  }
+
+  const builder = productCriteriaToUrlBuilder(
+    `${productsApiUrl}/AskAI`,
+    criteria,
+  );
+
+  return api.post(builder.build(), {
+    query: criteria.query ? urlStringToString(criteria.query) : undefined,
+    kNeighbours: criteria.kNeighbours,
+  });
 };

@@ -1,30 +1,35 @@
+import './ProductList.scss';
+
+import { CircularProgress } from '@chakra-ui/react';
+import { AxiosResponse } from 'axios';
 import React, { ReactElement, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { CircularProgress } from '@chakra-ui/react';
-import ProductTile from '../../components/ProductTile/ProductTile';
-import './ProductList.scss';
+
+import Filters from '../../components/Filters/Filters';
 import PagingScrollBar from '../../components/PagingScrollBar/PagingScrollBar';
+import ProductTile from '../../components/ProductTile/ProductTile';
+import useEffectSingular from '../../hooks/useEffectSignular';
 import { ROUTES } from '../../routes/routes';
+import { BrandObject } from '../../services/brand.service';
+import { CategoryObject } from '../../services/category.service';
+import { IngredientObject } from '../../services/ingredients.service';
 import {
+  getProductsListAiApi,
   getProductsListApi,
   ProductCriteria,
   productCriteriaToUrl,
   ProductObject,
+  ProductResponse,
   SortBy,
   SortOption,
   SortOrder,
   urlToProductCriteria,
 } from '../../services/product.service';
-import { RootState } from '../../store/reducers';
-import { IngredientObject } from '../../services/ingredients.service';
-import useEffectSingular from '../../hooks/useEffectSignular';
-import { handleError } from '../../utils/handleError';
-import Filters from '../../components/Filters/Filters';
-import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
 import { ProviderObject } from '../../services/providers.api';
-import { BrandObject } from '../../services/brand.service';
-import { CategoryObject } from '../../services/category.service';
+import { RootState } from '../../store/reducers';
+import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
+import { handleError } from '../../utils/handleError';
 
 const ProductList = (): ReactElement => {
   const navigate = useNavigate();
@@ -35,6 +40,7 @@ const ProductList = (): ReactElement => {
     location.search,
   );
 
+  const [isAi, setIsAi] = useState<boolean>(location.state?.fromAi ?? false);
   const [products, setProducts] = useState<ProductObject[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -45,7 +51,13 @@ const ProductList = (): ReactElement => {
 
     setIsFetching(true);
     try {
-      const response = await getProductsListApi(criteria, page);
+      let response: AxiosResponse<ProductResponse>;
+      if (isAi) {
+        response = await getProductsListAiApi(criteria);
+        setIsAi(false);
+      } else {
+        response = await getProductsListApi(criteria, page);
+      }
       if (response && response.data) {
         setProducts((prevProducts) => {
           const newProducts = response.data.products.filter(

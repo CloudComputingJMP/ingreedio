@@ -1,18 +1,21 @@
+import './App.scss';
+
 import React, { ReactElement } from 'react';
 import { Route, Routes } from 'react-router-dom';
+
+import Header from './components/Header';
+import useCheckForcefulLogout from './hooks/useCheckForcefulLogout';
+import useLoginAutomatically from './hooks/useLoginAutomatically';
+import AiHome from './pages/ai_home/AiHome';
 import Home from './pages/home/Home';
 import Login from './pages/login/Login';
-import { ROUTES } from './routes/routes';
-import './App.scss';
-import Header from './components/Header';
-import Registration from './pages/registraton/Registration';
-import Profile from './pages/profile/Profile';
-import ProductList from './pages/product_list/ProductList';
-import ProductDetails from './pages/product_details/ProductDetails';
-import useLoginAutomatically from './hooks/useLoginAutomatically';
-import { LoginState, ProtectedRoute } from './routes/ProtectedRoute';
-import useCheckForcefulLogout from './hooks/useCheckForcefulLogout';
 import ModPanel from './pages/mod_panel/ModPanel';
+import ProductDetails from './pages/product_details/ProductDetails';
+import ProductList from './pages/product_list/ProductList';
+import Profile from './pages/profile/Profile';
+import Registration from './pages/registraton/Registration';
+import { LoginState, ProtectedRoute } from './routes/ProtectedRoute';
+import { ROUTES } from './routes/routes';
 
 function App(): ReactElement {
   useLoginAutomatically();
@@ -24,6 +27,7 @@ function App(): ReactElement {
       <div className="screen">
         <Routes>
           <Route index element={<Home />} />
+          <Route path={ROUTES.AI} element={<AiHome />} />
           <Route
             path={ROUTES.LOGIN}
             element={(
