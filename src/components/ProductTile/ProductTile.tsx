@@ -1,7 +1,9 @@
+import './ProductTile.scss';
+
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
+
 import Card from '../Card/Card';
-import './ProductTile.scss';
 import StarRating from '../StarRating/StarRating';
 
 type ProductTileProps = {

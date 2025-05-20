@@ -1,5 +1,6 @@
-import React from 'react';
 import './Card.scss'; // Import CSS file for styling
+
+import React from 'react';
 
 interface Card {
   children: React.ReactNode; // Content of the card

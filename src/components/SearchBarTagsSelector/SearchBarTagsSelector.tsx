@@ -1,9 +1,11 @@
+import './SearchBarTagsSelector.scss';
+
 import React, { useState } from 'react';
-import AutocompleteSearchBar from '../AutocompleteSearchBar/AutocompleteSearchBar';
-import Tag from '../Tag/Tag';
+
 import { TagColor } from '../../theme/tagColor';
 import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
-import './SearchBarTagsSelector.scss';
+import AutocompleteSearchBar from '../AutocompleteSearchBar/AutocompleteSearchBar';
+import Tag from '../Tag/Tag';
 
 type SearchBarTagsSelectorProps = {
   getSuggestions: (input: string) => Promise<ObjectWithNameAndId[] | null>;

@@ -1,16 +1,18 @@
-import React, { ReactElement, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import Card from '../../components/Card/Card';
 import './Profile.scss';
+
+import React, { ReactElement, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import Card from '../../components/Card/Card';
 import FilledButton from '../../components/FilledButton/FilledButton';
 import ProfileSection from '../../components/ProfileSection/ProfileSection';
-import UserDetails from '../../components/UserDetails/UserDetails';
 import TagList from '../../components/TagList/TagList';
+import UserDetails from '../../components/UserDetails/UserDetails';
 import { ROUTES } from '../../routes/routes';
+import { IngredientObject } from '../../services/ingredients.service';
 import actions from '../../store/actions';
 import { RootState } from '../../store/reducers';
-import { IngredientObject } from '../../services/ingredients.service';
 
 // eslint-disable-next-line arrow-body-style
 const Profile = (): ReactElement => {

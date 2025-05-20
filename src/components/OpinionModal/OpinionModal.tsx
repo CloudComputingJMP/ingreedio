@@ -1,19 +1,21 @@
 // OpinionModal.tsx
 
-import React, { useEffect, useState } from 'react';
+import './OpinionModal.scss';
+
 import {
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
   ModalBody,
+  ModalCloseButton,
+  ModalContent,
   ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Textarea,
 } from '@chakra-ui/react';
-import StarRatingInput from '../StarRatingInput/StarRatingInput';
-import './OpinionModal.scss';
+import React, { useEffect, useState } from 'react';
+
 import FilledButton from '../FilledButton/FilledButton';
+import StarRatingInput from '../StarRatingInput/StarRatingInput';
 import TextButton from '../TextButton/TextButton';
 
 interface OpinionModalProps {

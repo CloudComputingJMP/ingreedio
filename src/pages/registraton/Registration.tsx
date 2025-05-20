@@ -1,13 +1,15 @@
-import React, { ReactElement, useEffect, useState } from 'react';
 import './Registration.scss';
+
 import {
   Button,
   FormControl,
   FormHelperText,
   useToast,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import Input from '../../components/Input/Input';
 import { ROUTES } from '../../routes/routes';
 import actions from '../../store/actions';

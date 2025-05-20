@@ -1,7 +1,9 @@
+import './AutocompleteSearchBar.scss';
+
 import React, {
   ChangeEvent, useEffect, useRef, useState,
 } from 'react';
-import './AutocompleteSearchBar.scss';
+
 import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
 
 const DEBOUNCING_TIME_MS = 275;

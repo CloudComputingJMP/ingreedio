@@ -1,5 +1,6 @@
-import React from 'react';
 import './ProfileSection.scss';
+
+import React from 'react';
 
 type CardProps = {
   children: React.ReactNode; // Content of the card

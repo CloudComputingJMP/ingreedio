@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { AnyAction } from 'redux';
+
 import { AuthResponse } from '../../services/auth.service';
 
 export const types = {

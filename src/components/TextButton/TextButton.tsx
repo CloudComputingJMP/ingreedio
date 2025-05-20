@@ -1,5 +1,7 @@
-import React, { ReactNode } from 'react';
 import './TextButton.scss';
+
+import React, { ReactNode } from 'react';
+
 import Button from '../Button/Button';
 
 interface TextButtonProps {

@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
-import React, { FC } from 'react';
 import './Description.scss';
+
+import React, { FC } from 'react';
 
 interface DescriptionProps {
   description: string;

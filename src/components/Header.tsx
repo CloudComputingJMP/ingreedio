@@ -1,18 +1,22 @@
-import React, { ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import FilledButton from './FilledButton/FilledButton';
-import logo from '../assets/logo.svg';
 import './Header.scss';
-import TextButton from './TextButton/TextButton';
-import { ROUTES } from '../routes/routes';
-import profileIcon from '../assets/icons/profile.svg';
+
+import React, { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import modIcon from '../assets/icons/mod.svg';
+import profileIcon from '../assets/icons/profile.svg';
+import logo from '../assets/logo.svg';
+import { ROUTES } from '../routes/routes';
 import { RootState } from '../store/reducers';
+import FilledButton from './FilledButton/FilledButton';
+import TextButton from './TextButton/TextButton';
 
 const IconsPanel = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isMod } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, isMod } = useSelector(
+    (state: RootState) => state.auth,
+  );
 
   if (!isAuthenticated) {
     return (
@@ -34,24 +38,16 @@ const IconsPanel = () => {
   return (
     <div className="profile-button-container">
       {isMod && (
-        <TextButton
-          onClick={() => navigate(ROUTES.MOD)}
-        >
+        <TextButton onClick={() => navigate(ROUTES.MOD)}>
           <div className="button-icon">
-            <img
-              src={modIcon}
-              alt="moderator console"
-            />
+            <img src={modIcon} alt="moderator console" />
           </div>
           <div>Mod</div>
         </TextButton>
       )}
       <TextButton onClick={() => navigate(ROUTES.PROFILE)}>
         <div className="button-icon">
-          <img
-            src={profileIcon}
-            alt="profile icon"
-          />
+          <img src={profileIcon} alt="profile icon" />
         </div>
         <div>Profile</div>
       </TextButton>

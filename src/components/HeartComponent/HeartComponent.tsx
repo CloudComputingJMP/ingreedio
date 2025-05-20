@@ -1,6 +1,7 @@
+import './HeartComponent.scss';
+
 import React from 'react';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
-import './HeartComponent.scss';
 
 type HeartProps = {
   isLiked: boolean;

@@ -1,5 +1,6 @@
-import React from 'react';
 import './UserDetails.scss';
+
+import React from 'react';
 
 interface UserData {
   title: string;

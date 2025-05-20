@@ -1,6 +1,8 @@
-import React from 'react';
-import Tag from '../Tag/Tag';
 import './TagList.scss';
+
+import React from 'react';
+
+import Tag from '../Tag/Tag';
 
 type TagListProps = {
   tags: string[];

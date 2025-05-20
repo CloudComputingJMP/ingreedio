@@ -1,33 +1,12 @@
 /* eslint-disable function-paren-newline */
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable no-confusing-arrow */
+import './Filters.scss';
+
 import React, { FormEvent, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
-import {
-  IngredientObject,
-  getIngredientsApi,
-  getIngredientsByIdsApi,
-} from '../../services/ingredients.service';
-import SearchBarTagsSelector from '../SearchBarTagsSelector/SearchBarTagsSelector';
-import ScrollBar from '../Scrollbar/ScrollBar';
-import SearchBar from '../SearchBar/SearchBar';
-import { RootState } from '../../store/reducers';
-import {
-  ProductCriteria,
-  SortBy,
-  parseSortBy,
-} from '../../services/product.service';
-import { handleError } from '../../utils/handleError';
-import { TagColor } from '../../theme/tagColor';
-import FilledButton from '../FilledButton/FilledButton';
+
 import useEffectSingular from '../../hooks/useEffectSignular';
-import './Filters.scss';
-import {
-  ProviderObject,
-  getProvidersApi,
-  getProvidersByIdsApi,
-} from '../../services/providers.api';
 import {
   BrandObject,
   getBrandsApi,
@@ -38,7 +17,30 @@ import {
   getCategoriesApi,
   getCategoriesByIdsApi,
 } from '../../services/category.service';
+import {
+  getIngredientsApi,
+  getIngredientsByIdsApi,
+  IngredientObject,
+} from '../../services/ingredients.service';
+import {
+  parseSortBy,
+  ProductCriteria,
+  SortBy,
+} from '../../services/product.service';
+import {
+  getProvidersApi,
+  getProvidersByIdsApi,
+  ProviderObject,
+} from '../../services/providers.api';
+import { RootState } from '../../store/reducers';
+import { TagColor } from '../../theme/tagColor';
+import { ObjectWithNameAndId } from '../../types/objectWithNameAndId';
+import { handleError } from '../../utils/handleError';
+import FilledButton from '../FilledButton/FilledButton';
 import FiltersSorting from '../FiltersSelect.tsx/FiltersSorting';
+import ScrollBar from '../Scrollbar/ScrollBar';
+import SearchBar from '../SearchBar/SearchBar';
+import SearchBarTagsSelector from '../SearchBarTagsSelector/SearchBarTagsSelector';
 
 const MAX_NUMBER_OF_SUGGESTIONS = 50;
 

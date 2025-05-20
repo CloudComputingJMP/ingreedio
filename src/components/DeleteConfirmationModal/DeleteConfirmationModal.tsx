@@ -1,14 +1,14 @@
-import React from 'react';
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Button,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/react';
+import React from 'react';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;

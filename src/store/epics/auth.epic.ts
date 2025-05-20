@@ -1,10 +1,11 @@
 /* eslint-disable max-len */
-import { StateObservable, combineEpics, ofType } from 'redux-observable';
-import { switchMap, catchError } from 'rxjs/operators';
-import { from, of, Observable } from 'rxjs';
 import { AnyAction } from 'redux';
-import actions, { types } from '../actions';
+import { combineEpics, ofType, StateObservable } from 'redux-observable';
+import { from, Observable, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+
 import services from '../../services';
+import actions, { types } from '../actions';
 import { RootState } from '../reducers';
 
 const signInEpic = (

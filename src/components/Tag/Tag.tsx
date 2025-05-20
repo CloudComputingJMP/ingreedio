@@ -1,6 +1,8 @@
 // Tag.tsx
-import React from 'react';
 import './Tag.scss';
+
+import React from 'react';
+
 import deleteIcon from '../../assets/icons/delete.svg';
 
 type TagProps = {

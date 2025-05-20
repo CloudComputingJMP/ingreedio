@@ -1,5 +1,6 @@
-import React, { ChangeEvent, useState } from 'react';
 import './SearchBar.scss';
+
+import React, { ChangeEvent, useState } from 'react';
 
 type SearchBarProps = {
   label?: string;

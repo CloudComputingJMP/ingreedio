@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { AnyAction } from 'redux';
+
 import { UserInfoResponse } from '../../services/user.service';
 
 export const types = {

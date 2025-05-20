@@ -1,12 +1,13 @@
-import { Epic, combineEpics, ofType } from 'redux-observable';
+import { AxiosResponse } from 'axios';
 import { AnyAction } from 'redux';
+import { combineEpics, Epic, ofType } from 'redux-observable';
 import {
   catchError, from, map, of, switchMap,
 } from 'rxjs';
-import { AxiosResponse } from 'axios';
-import { RootState } from '../reducers';
+
+import { getUserInfoApi, UserInfoResponse } from '../../services/user.service';
 import actions, { types } from '../actions';
-import { UserInfoResponse, getUserInfoApi } from '../../services/user.service';
+import { RootState } from '../reducers';
 
 const userInfoEpic: Epic<AnyAction, AnyAction, RootState> = (action$, _state$) => action$.pipe(
   ofType(types.GET_USER_INFO_REQUEST),

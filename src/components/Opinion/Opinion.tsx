@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useState, useEffect } from 'react';
 import './Opinion.scss';
+
+import React, { useEffect, useState } from 'react';
 import {
-  FaThumbsUp,
-  FaThumbsDown,
-  FaStar,
-  FaTrashAlt,
   FaEdit,
+  FaStar,
+  FaThumbsDown,
+  FaThumbsUp,
+  FaTrashAlt,
 } from 'react-icons/fa';
 
 interface OpinionProps {

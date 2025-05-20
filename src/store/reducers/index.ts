@@ -1,4 +1,5 @@
 import { combineReducers } from '@reduxjs/toolkit';
+
 import auth from './auth.reducer';
 import like from './like.reducer';
 import user from './user.reducer';

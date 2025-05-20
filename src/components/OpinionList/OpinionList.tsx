@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
 import { Button, useDisclosure } from '@chakra-ui/react';
-import ScrollBar from '../Scrollbar/ScrollBar';
-import Opinion from '../Opinion/Opinion';
+import React, { useState } from 'react';
+
 import { ReviewResponse } from '../../services/review.service';
+import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
+import Opinion from '../Opinion/Opinion';
 import OpinionModal from '../OpinionModal/OpinionModal';
 import ReportOpinionModal from '../ReportOpinionModal/ReportOpinionModal';
-import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
+import ScrollBar from '../Scrollbar/ScrollBar';
 
 interface OpinionListProps {
   productId: string | undefined;

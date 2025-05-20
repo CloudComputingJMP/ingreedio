@@ -1,9 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 // StarRatingInput.tsx
 
+import './StarRatingInput.scss';
+
 import React, { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
-import './StarRatingInput.scss';
 
 interface StarRatingInputProps {
   value: number | null,

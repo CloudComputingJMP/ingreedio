@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
-import { types } from '../actions';
+
 import { IngredientObject } from '../../services/ingredients.service';
+import { types } from '../actions';
 
 type LikeState = {
   likedIngredients: IngredientObject[];

@@ -1,8 +1,9 @@
 import { AxiosResponse } from 'axios';
-import { apiUrl } from '../config/config';
-import RequestUrlBuilder from '../utils/requestBuilder';
-import { ObjectWithNameAndId } from '../types/objectWithNameAndId';
+
 import api from '../config/api';
+import { apiUrl } from '../config/config';
+import { ObjectWithNameAndId } from '../types/objectWithNameAndId';
+import RequestUrlBuilder from '../utils/requestBuilder';
 
 const brandsApiUrl = `${apiUrl}/brands`;
 

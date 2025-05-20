@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { MdOutlineThumbUp, MdOutlineThumbDown } from 'react-icons/md';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../store/actions';
 import './ProductDetailsIngredient.scss';
+
+import React, { useState } from 'react';
+import { MdOutlineThumbDown, MdOutlineThumbUp } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
+
+import actions from '../../store/actions';
 import { RootState } from '../../store/reducers';
 
 type ProductDetailsIngredientProps = {

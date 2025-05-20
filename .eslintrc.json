@@ -14,8 +14,10 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "react", "prettier"],
+  "plugins": ["@typescript-eslint", "react", "prettier", "simple-import-sort"],
   "rules": {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
     "import/extensions": "off",
     "react/jsx-filename-extension": "off",
     "no-use-before-define": "off",

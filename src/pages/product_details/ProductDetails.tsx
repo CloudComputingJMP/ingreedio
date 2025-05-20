@@ -1,7 +1,7 @@
 // ProductDetails.tsx
 
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import './ProductDetails.scss';
+
 import {
   CircularProgress,
   Tab,
@@ -12,35 +12,37 @@ import {
   Tabs,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
 import { AxiosResponse } from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+
 import Card from '../../components/Card/Card';
-import './ProductDetails.scss';
-import ProductDescription from '../../components/ProductDescription/ProductDescription';
-import ScrollBar from '../../components/Scrollbar/ScrollBar';
-import { RootState } from '../../store/reducers';
-import {
-  ProductDetailsResponse,
-  getProductDetailsApi,
-} from '../../services/product.service';
-import ProductDetailsIngredient from '../../components/ProductDetailsIngredient/ProductDetailsIngredient';
-import { likeProductApi, unlikeProductApi } from '../../services/like.service';
+import Description from '../../components/Description/Description';
+import OpinionList from '../../components/OpinionList/OpinionList';
 import OpinionModal from '../../components/OpinionModal/OpinionModal';
+import ProductDescription from '../../components/ProductDescription/ProductDescription';
+import ProductDetailsIngredient from '../../components/ProductDetailsIngredient/ProductDetailsIngredient';
+import ScrollBar from '../../components/Scrollbar/ScrollBar';
+import { likeProductApi, unlikeProductApi } from '../../services/like.service';
 import {
-  ReviewResponse,
+  getProductDetailsApi,
+  ProductDetailsResponse,
+} from '../../services/product.service';
+import {
+  deleteProductReviewApi,
+  dislikeReviewApi,
   getProductReviewsApi,
+  likeReviewApi,
   postProductReviewApi,
   putProductReviewApi,
-  deleteProductReviewApi,
-  likeReviewApi,
-  unlikeReviewApi,
-  dislikeReviewApi,
-  undislikeReviewApi,
   reportReviewApi,
+  ReviewResponse,
+  undislikeReviewApi,
+  unlikeReviewApi,
 } from '../../services/review.service';
-import Description from '../../components/Description/Description';
+import { RootState } from '../../store/reducers';
 import { handleError } from '../../utils/handleError';
-import OpinionList from '../../components/OpinionList/OpinionList';
 
 const ProductDetails = (): JSX.Element => {
   const { productId } = useParams<{ productId: string }>();

@@ -1,6 +1,7 @@
-import React from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import './StarRating.scss';
+
+import React from 'react';
+import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 
 interface StarRatingProps {
   rating: number; // Input rating from 1 to 10

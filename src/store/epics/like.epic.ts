@@ -1,11 +1,12 @@
 /* eslint-disable implicit-arrow-linebreak */
-import { Epic, ofType, combineEpics } from 'redux-observable';
-import { mergeMap } from 'rxjs/operators';
 import { AxiosError } from 'axios';
 import { AnyAction } from 'redux';
-import { RootState } from '../reducers';
-import actions, { types } from '../actions';
+import { combineEpics, Epic, ofType } from 'redux-observable';
+import { mergeMap } from 'rxjs/operators';
+
 import api from '../../config/api';
+import actions, { types } from '../actions';
+import { RootState } from '../reducers';
 
 const getLikeApiUrl = (ingredientId: string): string =>
   `/ingredients/${ingredientId}/likes`;

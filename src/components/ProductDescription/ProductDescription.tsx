@@ -1,7 +1,9 @@
-import React from 'react';
 import './ProductDescription.scss';
-import StarRating from '../StarRating/StarRating';
+
+import React from 'react';
+
 import HeartComponent from '../HeartComponent/HeartComponent';
+import StarRating from '../StarRating/StarRating';
 
 type ProductDescriptionProps = {
   name: string;

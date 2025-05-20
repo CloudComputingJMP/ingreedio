@@ -1,21 +1,20 @@
-import React, { ReactElement, useState } from 'react';
+import './ModPanel.scss';
 
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
+  Collapse,
   FormControl,
   FormHelperText,
+  FormLabel,
   Input,
   Textarea,
-  FormLabel,
-  Collapse,
-  Box,
 } from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import React, { ReactElement, useState } from 'react';
 
 import Card from '../../components/Card/Card';
 import ProfileSection from '../../components/ProfileSection/ProfileSection';
-
-import './ModPanel.scss';
 
 const initialForm = {
   name: '',
