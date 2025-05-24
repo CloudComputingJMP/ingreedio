@@ -6,17 +6,13 @@ import {
   Button,
   Collapse,
   FormControl,
-  FormLabel,
   Input,
-  Textarea,
 } from '@chakra-ui/react';
 import React, { ReactElement, useState } from 'react';
 
 import Card from '../../components/Card/Card';
-import ProfileSection from '../../components/ProfileSection/ProfileSection';
 import ScrollBar from '../../components/Scrollbar/ScrollBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
-// Import selectors
 import SearchBarTagsSelector from '../../components/SearchBarTagsSelector/SearchBarTagsSelector';
 import { BrandObject, getBrandsApi } from '../../services/brand.service';
 import {
@@ -27,7 +23,10 @@ import {
   getIngredientsApi,
   IngredientObject,
 } from '../../services/ingredients.service';
-import { addProductApi } from '../../services/product.service';
+import {
+  addProductApi,
+  uploadProductImagesApi,
+} from '../../services/product.service';
 import { getProvidersApi, ProviderObject } from '../../services/providers.api';
 import { handleError } from '../../utils/handleError';
 
@@ -55,7 +54,11 @@ const ModPanel = (): ReactElement => {
   const [smallImage, setSmallImage] = useState<File | null>(null);
   const [largeImage, setLargeImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const [addedProductId, setAddedProductId] = useState<number | null>(null);
+  const [imageUploadSuccess, setImageUploadSuccess] = useState<boolean | null>(
+    null,
+  );
 
   // Dropdown state
   const [selectedBrands, setSelectedBrands] = useState<BrandObject[]>([]);
@@ -69,7 +72,6 @@ const ModPanel = (): ReactElement => {
     IngredientObject[]
   >([]);
 
-  // Fetch suggestions for dropdowns
   const fetchBrandsSuggestions = async (query: string) => {
     if (!query) return [];
     const res = await getBrandsApi(query, MAX_NUMBER_OF_SUGGESTIONS);
@@ -124,9 +126,20 @@ const ModPanel = (): ReactElement => {
 
   const handleImageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Call API to upload images for product with ID imageProductId
-    // Example: await uploadImagesApi(imageProductId, smallImage, largeImage);
-    console.log('Images uploaded for product ID:', imageProductId);
+    setIsLoading(true);
+    setImageUploadSuccess(null);
+    try {
+      await uploadProductImagesApi(imageProductId, smallImage, largeImage);
+      setImageProductId('');
+      setSmallImage(null);
+      setLargeImage(null);
+      setImageUploadSuccess(true);
+      setTimeout(() => setImageUploadSuccess(null), 3000);
+    } catch (error) {
+      handleError('Failed to upload images');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -134,7 +147,6 @@ const ModPanel = (): ReactElement => {
       <div className="card-wrapper">
         <Card>
           <div className="card-content-container">
-            {/* Add a Product Section */}
             <Box mb={4}>
               <Button
                 onClick={() =>
@@ -365,9 +377,21 @@ const ModPanel = (): ReactElement => {
                       colorScheme="blue"
                       type="submit"
                       width="100%"
+                      isLoading={isLoading}
                     >
                       Upload Images
                     </Button>
+                    {imageUploadSuccess === true && (
+                      <div
+                        style={{
+                          color: 'green',
+                          marginTop: 8,
+                          fontWeight: 600,
+                        }}
+                      >
+                        Images uploaded successfully!
+                      </div>
+                    )}
                   </form>
                 </Box>
               </Collapse>

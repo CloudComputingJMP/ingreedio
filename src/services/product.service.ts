@@ -328,3 +328,19 @@ export const getProductsListAiApi = (
 export const addProductApi = (
   payload: AddProductPayload,
 ): Promise<AxiosResponse<AddProductResponse>> => api.post(`${productsApiUrl}`, payload);
+
+export const uploadProductImagesApi = (
+  productId: string,
+  smallImg: File | null,
+  bigImg: File | null,
+): Promise<void> => {
+  const formData = new FormData();
+  if (smallImg) formData.append('smallImg', smallImg);
+  if (bigImg) formData.append('bigImg', bigImg);
+
+  return api.post(`/products/${productId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
