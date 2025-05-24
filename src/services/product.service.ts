@@ -83,6 +83,37 @@ export interface ProductDetailsResponse {
   rating: number;
 }
 
+export interface AddProductPayload {
+  name: string;
+  smallImageUrl: string;
+  largeImageUrl: string;
+  provider: number;
+  brand: number;
+  categories: number[];
+  shortDescription: string;
+  longDescription: string;
+  volume: string;
+  ingredients: number[];
+}
+
+export interface AddProductResponse {
+  id: number;
+  name: string;
+  smallImageUrl: string;
+  largeImageUrl: string;
+  provider: { id: number; name: string };
+  brand: { id: number; name: string };
+  categories: { id: number; name: string }[];
+  shortDescription: string;
+  longDescription: string;
+  volume: string;
+  ingredients: { id: number; name: string }[];
+  rating: number;
+  ratingSum: number;
+  likedBy: number[];
+  ratings: Record<string, number>;
+}
+
 export const parseSortBy = (input: string): SortBy | undefined => {
   const parts = input.split('-');
   const order = parts[0];
@@ -293,3 +324,7 @@ export const getProductsListAiApi = (
     kNeighbours: criteria.kNeighbours,
   });
 };
+
+export const addProductApi = (
+  payload: AddProductPayload,
+): Promise<AxiosResponse<AddProductResponse>> => api.post(`${productsApiUrl}`, payload);

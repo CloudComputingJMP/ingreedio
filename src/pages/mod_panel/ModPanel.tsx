@@ -6,7 +6,6 @@ import {
   Button,
   Collapse,
   FormControl,
-  FormHelperText,
   FormLabel,
   Input,
   Textarea,
@@ -15,19 +14,37 @@ import React, { ReactElement, useState } from 'react';
 
 import Card from '../../components/Card/Card';
 import ProfileSection from '../../components/ProfileSection/ProfileSection';
+import ScrollBar from '../../components/Scrollbar/ScrollBar';
+import SearchBar from '../../components/SearchBar/SearchBar';
+// Import selectors
+import SearchBarTagsSelector from '../../components/SearchBarTagsSelector/SearchBarTagsSelector';
+import { BrandObject, getBrandsApi } from '../../services/brand.service';
+import {
+  CategoryObject,
+  getCategoriesApi,
+} from '../../services/category.service';
+import {
+  getIngredientsApi,
+  IngredientObject,
+} from '../../services/ingredients.service';
+import { addProductApi } from '../../services/product.service';
+import { getProvidersApi, ProviderObject } from '../../services/providers.api';
+import { handleError } from '../../utils/handleError';
 
 const initialForm = {
   name: '',
   smallImageUrl: '',
   largeImageUrl: '',
-  provider: '',
-  brand: '',
-  categories: '',
   shortDescription: '',
   longDescription: '',
   volume: '',
+  provider: '',
+  brand: '',
+  categories: '',
   ingredients: '',
 };
+
+const MAX_NUMBER_OF_SUGGESTIONS = 50;
 
 const ModPanel = (): ReactElement => {
   const [form, setForm] = useState(initialForm);
@@ -37,30 +54,75 @@ const ModPanel = (): ReactElement => {
   const [imageProductId, setImageProductId] = useState('');
   const [smallImage, setSmallImage] = useState<File | null>(null);
   const [largeImage, setLargeImage] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [addedProductId, setAddedProductId] = useState<number | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  // Dropdown state
+  const [selectedBrands, setSelectedBrands] = useState<BrandObject[]>([]);
+  const [selectedProviders, setSelectedProviders] = useState<ProviderObject[]>(
+    [],
+  );
+  const [selectedCategories, setSelectedCategories] = useState<
+    CategoryObject[]
+  >([]);
+  const [selectedIngredients, setSelectedIngredients] = useState<
+    IngredientObject[]
+  >([]);
+
+  // Fetch suggestions for dropdowns
+  const fetchBrandsSuggestions = async (query: string) => {
+    if (!query) return [];
+    const res = await getBrandsApi(query, MAX_NUMBER_OF_SUGGESTIONS);
+    return res.data;
+  };
+  const fetchProvidersSuggestions = async (query: string) => {
+    if (!query) return [];
+    const res = await getProvidersApi(query, MAX_NUMBER_OF_SUGGESTIONS);
+    return res.data;
+  };
+  const fetchCategoriesSuggestions = async (query: string) => {
+    if (!query) return [];
+    const res = await getCategoriesApi(query, MAX_NUMBER_OF_SUGGESTIONS);
+    return res.data;
+  };
+  const fetchIngredientsSuggestions = async (query: string) => {
+    if (!query) return [];
+    const res = await getIngredientsApi(query, MAX_NUMBER_OF_SUGGESTIONS);
+    return res.data;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Prepare request body
     const body = {
-      ...form,
-      provider: Number(form.provider),
-      brand: Number(form.brand),
-      categories: form.categories.split(',').map((id) => Number(id.trim())),
-      ingredients: form.ingredients.split(',').map((id) => Number(id.trim())),
+      name: form.name,
+      smallImageUrl: form.smallImageUrl,
+      largeImageUrl: form.largeImageUrl,
+      provider: selectedProviders[0]?.id ? Number(selectedProviders[0].id) : 1,
+      brand: selectedBrands[0]?.id ? Number(selectedBrands[0].id) : 1,
+      categories: selectedCategories.map((cat) => Number(cat.id)),
+      shortDescription: form.shortDescription,
+      longDescription: form.longDescription,
+      volume: form.volume,
+      ingredients: selectedIngredients.map((ing) => Number(ing.id)),
     };
-    // TODO: Call API to add product
-    // await addProductApi(body);
-    console.log('Product added:', body);
+    setIsLoading(true);
+    setAddedProductId(null);
+    try {
+      const productAdded = await addProductApi(body);
+      setAddedProductId(productAdded.data.id);
+      setForm(initialForm);
+      setSelectedBrands([]);
+      setSelectedProviders([]);
+      setSelectedCategories([]);
+      setSelectedIngredients([]);
+    } catch (error) {
+      handleError('Failed to add product');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleImageSubmit = (e: React.FormEvent) => {
+  const handleImageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Call API to upload images for product with ID imageProductId
     // Example: await uploadImagesApi(imageProductId, smallImage, largeImage);
@@ -92,110 +154,151 @@ const ModPanel = (): ReactElement => {
               >
                 Add a product
               </Button>
+              {addedProductId && (
+                <div style={{ marginTop: 16, color: 'green', fontWeight: 600 }}>
+                  Product added! New product ID:
+                  {' '}
+                  {addedProductId}
+                </div>
+              )}
               <Collapse in={expanded === 'product'}>
-                <Box p="15px">
-                  <form
-                    className="add-product-form two-column-form"
-                    onSubmit={handleSubmit}
-                  >
-                    <div className="form-columns">
-                      <div className="form-col">
-                        <FormControl id="name" mb={4} isRequired>
-                          <FormLabel>Product name</FormLabel>
-                          <Input
-                            name="name"
-                            type="text"
-                            value={form.name}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                        <FormControl id="provider" mb={4} isRequired>
-                          <FormLabel>Provider ID</FormLabel>
-                          <Input
-                            name="provider"
-                            type="number"
-                            value={form.provider}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                        <FormControl id="brand" mb={4} isRequired>
-                          <FormLabel>Brand ID</FormLabel>
-                          <Input
-                            name="brand"
-                            type="number"
-                            value={form.brand}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                        <FormControl id="categories" mb={4}>
-                          <FormLabel>
-                            Category IDs (comma separated)
-                          </FormLabel>
-                          <Input
-                            name="categories"
-                            type="text"
-                            value={form.categories}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                      </div>
-                      <div className="form-col">
-                        <FormControl id="shortDescription" mb={4}>
-                          <FormLabel>Short description</FormLabel>
-                          <Input
-                            name="shortDescription"
-                            type="text"
-                            value={form.shortDescription}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                        <FormControl id="longDescription" mb={4}>
-                          <FormLabel>Long description</FormLabel>
-                          <Textarea
-                            name="longDescription"
-                            value={form.longDescription}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                        <FormControl id="volume" mb={4}>
-                          <FormLabel>Volume</FormLabel>
-                          <Input
-                            name="volume"
-                            type="text"
-                            value={form.volume}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                        <FormControl id="ingredients" mb={4}>
-                          <FormLabel>
-                            Ingredient IDs (comma separated)
-                          </FormLabel>
-                          <Input
-                            name="ingredients"
-                            type="text"
-                            value={form.ingredients}
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                      </div>
+                <div className="scrollbar-container">
+                  <ScrollBar>
+                    <div className="scrollbar-inside">
+                      <Box p="15px">
+                        <form
+                          className="add-product-form two-column-form"
+                          onSubmit={handleSubmit}
+                        >
+                          <div className="form-columns">
+                            <div className="form-col">
+                              <FormControl id="name" mb={4} isRequired>
+                                <SearchBar
+                                  label="Product name"
+                                  placeholder="e.g. Nivea Moisturizing Cream"
+                                  initialValue={form.name}
+                                  onChange={(value) =>
+                                    setForm((prev) => ({
+                                      ...prev,
+                                      name: value,
+                                    }))}
+                                />
+                              </FormControl>
+                              <FormControl id="provider" mb={4} isRequired>
+                                <SearchBarTagsSelector
+                                  getSuggestions={fetchProvidersSuggestions}
+                                  selectedElements={selectedProviders}
+                                  onElementChosen={(element) =>
+                                    setSelectedProviders([element])}
+                                  onElementRemoved={() =>
+                                    setSelectedProviders([])}
+                                  label="Provider"
+                                  placeholder="e.g. Rossmann"
+                                />
+                              </FormControl>
+                              <FormControl id="brand" mb={4} isRequired>
+                                <SearchBarTagsSelector
+                                  getSuggestions={fetchBrandsSuggestions}
+                                  selectedElements={selectedBrands}
+                                  onElementChosen={(element) =>
+                                    setSelectedBrands([element])}
+                                  onElementRemoved={() => setSelectedBrands([])}
+                                  label="Brand"
+                                  placeholder="e.g. Nivea"
+                                />
+                              </FormControl>
+                              <FormControl id="categories" mb={4}>
+                                <SearchBarTagsSelector
+                                  getSuggestions={fetchCategoriesSuggestions}
+                                  selectedElements={selectedCategories}
+                                  onElementChosen={(element) =>
+                                    setSelectedCategories((old) => [
+                                      ...old,
+                                      element,
+                                    ])}
+                                  onElementRemoved={(id) =>
+                                    setSelectedCategories((old) =>
+                                      old.filter((cat) => cat.id !== id))}
+                                  label="Categories"
+                                  placeholder="e.g. skin"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="form-col">
+                              <FormControl id="shortDescription" mb={4}>
+                                <SearchBar
+                                  label="Short description"
+                                  placeholder="e.g. moisturizing cream"
+                                  initialValue={form.shortDescription}
+                                  onChange={(value) =>
+                                    setForm((prev) => ({
+                                      ...prev,
+                                      shortDescription: value,
+                                    }))}
+                                />
+                              </FormControl>
+                              <FormControl id="longDescription" mb={4}>
+                                <SearchBar
+                                  label="Long description"
+                                  placeholder="e.g. This cream is perfect for dry skin..."
+                                  initialValue={form.longDescription}
+                                  onChange={(value) =>
+                                    setForm((prev) => ({
+                                      ...prev,
+                                      longDescription: value,
+                                    }))}
+                                />
+                              </FormControl>
+                              <FormControl id="volume" mb={4}>
+                                <SearchBar
+                                  label="Volume"
+                                  placeholder="e.g. 400ml"
+                                  initialValue={form.volume}
+                                  onChange={(value) =>
+                                    setForm((prev) => ({
+                                      ...prev,
+                                      volume: value,
+                                    }))}
+                                />
+                              </FormControl>
+                              <FormControl id="ingredients" mb={4}>
+                                <SearchBarTagsSelector
+                                  getSuggestions={fetchIngredientsSuggestions}
+                                  selectedElements={selectedIngredients}
+                                  onElementChosen={(element) =>
+                                    setSelectedIngredients((old) => [
+                                      ...old,
+                                      element,
+                                    ])}
+                                  onElementRemoved={(id) =>
+                                    setSelectedIngredients((old) =>
+                                      old.filter((ing) => ing.id !== id))}
+                                  label="Ingredients"
+                                  placeholder="e.g. shea butter"
+                                />
+                              </FormControl>
+                            </div>
+                          </div>
+                          <Button
+                            borderRadius={20}
+                            px={8}
+                            fontSize={18}
+                            mt={2}
+                            mb={2}
+                            colorScheme="green"
+                            type="submit"
+                            width="100%"
+                            isLoading={isLoading}
+                          >
+                            Add Product
+                          </Button>
+                        </form>
+                      </Box>
                     </div>
-                    <Button
-                      borderRadius={20}
-                      px={8}
-                      fontSize={18}
-                      mt={2}
-                      mb={2}
-                      colorScheme="green"
-                      type="submit"
-                      width="100%"
-                    >
-                      Add Product
-                    </Button>
-                  </form>
-                </Box>
+                  </ScrollBar>
+                </div>
               </Collapse>
             </Box>
-            {/* Add Images to a Product Section */}
             <Box>
               <Button
                 onClick={() =>
@@ -222,16 +325,14 @@ const ModPanel = (): ReactElement => {
                     onSubmit={handleImageSubmit}
                   >
                     <FormControl id="imageProductId" mb={4} isRequired>
-                      <FormLabel>Product ID</FormLabel>
-                      <Input
-                        name="imageProductId"
-                        type="number"
-                        value={imageProductId}
-                        onChange={(e) => setImageProductId(e.target.value)}
+                      <SearchBar
+                        label="Product ID"
+                        placeholder="e.g. 1"
+                        initialValue={imageProductId}
+                        onChange={(value) => setImageProductId(value)}
                       />
                     </FormControl>
                     <FormControl id="smallImage" mb={4} isRequired>
-                      <FormLabel>Small image file</FormLabel>
                       <Input
                         pt="4px"
                         name="smallImage"
@@ -244,7 +345,6 @@ const ModPanel = (): ReactElement => {
                       />
                     </FormControl>
                     <FormControl id="largeImage" mb={4} isRequired>
-                      <FormLabel>Large image file</FormLabel>
                       <Input
                         pt="4px"
                         name="largeImage"

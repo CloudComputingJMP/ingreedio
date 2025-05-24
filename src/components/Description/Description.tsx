@@ -8,7 +8,7 @@ interface DescriptionProps {
 }
 
 const Description: FC<DescriptionProps> = ({ description }) => {
-  const paragraphs: string[] = description.split('\n\n\n');
+  const paragraphs: string[] = description ? description.split('\n\n\n') : [];
 
   return (
     <div className="description">

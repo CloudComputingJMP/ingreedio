@@ -12,6 +12,10 @@
     justify-content: center;
     align-items: center;
 
+    .scrollbar-container {
+      height: 600px;
+    }
+
     .card-header-text {
       font-size: 30px;
       font-weight: 600;
@@ -22,7 +26,7 @@
       padding: 35px;
       display: flex;
       flex-direction: column;
-      width: 1000px;
+      width: 1200px;
 
       .add-product-form.two-column-form {
         width: 100%;
