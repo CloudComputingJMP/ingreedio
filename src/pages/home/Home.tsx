@@ -32,6 +32,7 @@ const Home = (): ReactElement => {
   const allergensSelector = useSelector(
     (state: RootState) => state.like.dislikedIngredients,
   );
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const hasAllergens: boolean = allergensSelector?.length > 0;
 
   const navigate = useNavigate();
@@ -133,14 +134,16 @@ const Home = (): ReactElement => {
             </div>
           </div>
         </form>
-        <div className="ai-search-redirect">
-          <FilledButton
-            colorScheme={ColorScheme.AI}
-            onClick={() => navigate(ROUTES.AI)}
-          >
-            Try our new AI search! ✨
-          </FilledButton>
-        </div>
+        {isAuthenticated && (
+          <div className="ai-search-redirect">
+            <FilledButton
+              colorScheme={ColorScheme.AI}
+              onClick={() => navigate(ROUTES.AI)}
+            >
+              Try our new AI search! ✨
+            </FilledButton>
+          </div>
+        )}
       </div>
     </div>
   );

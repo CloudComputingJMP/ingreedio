@@ -27,7 +27,14 @@ function App(): ReactElement {
       <div className="screen">
         <Routes>
           <Route index element={<Home />} />
-          <Route path={ROUTES.AI} element={<AiHome />} />
+          <Route
+            path={ROUTES.AI}
+            element={(
+              <ProtectedRoute>
+                <AiHome />
+              </ProtectedRoute>
+            )}
+          />
           <Route
             path={ROUTES.LOGIN}
             element={(
